@@ -2,7 +2,9 @@
     "name": "scriptotek/marc",
     "type": "library",
     "description": "Simple interface to parsing MARC records using File_MARC",
-    "keywords": ["marc"],
+    "keywords": [
+        "marc"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -11,7 +13,7 @@
         }
     ],
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.4",
         "ext-xml": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
