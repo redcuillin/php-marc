@@ -4,6 +4,8 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/scriptotek/marc)](https://packagist.org/packages/scriptotek/marc)
 [![Total Downloads](https://img.shields.io/packagist/dt/scriptotek/marc)](https://packagist.org/packages/scriptotek/marc)
 
+# Fork by redcuillin for php8.4 support
+
 # scriptotek/marc
 
 This package provides a simple interface to work with MARC21 records using the excellent
