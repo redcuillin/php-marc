@@ -92,40 +92,4 @@ class CollectionTest extends TestCase
 
         $this->assertCount($expected, $collection->toArray());
     }
-
-    public function testSorterOrdersRecordsByControlField001()
-    {
-        $collection = Collection::fromFile(self::pathTo('sort-three-records.xml'));
-        $collection->sorter();
-
-        $ids = array_map(function (BibliographicRecord $r) {
-            return (string) $r->getId();
-        }, $collection->toArray());
-
-        $this->assertSame(['100', '200', '300'], $ids);
-    }
-
-    public function testSorterPutsRecordsWithoutFieldLast()
-    {
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>'
-            . '<collection xmlns="http://www.loc.gov/MARC21/slim">'
-            . '<record><leader>00778cam a22002531u 4500</leader>'
-            . '<controlfield tag="008">110607s1964    xx#||||||    |000|u|eng|d</controlfield></record>'
-            . '<record><leader>00778cam a22002531u 4500</leader>'
-            . '<controlfield tag="001">50</controlfield>'
-            . '<controlfield tag="008">110607s1964    xx#||||||    |000|u|eng|d</controlfield></record>'
-            . '</collection>';
-        $collection = Collection::fromString($xml)->sorter();
-
-        $ids = array_map(function (BibliographicRecord $r) {
-            $f = $r->getRecord()->getField('001');
-            if ($f === false || !$f->isControlField()) {
-                return '';
-            }
-
-            return trim($f->getData());
-        }, $collection->toArray());
-
-        $this->assertSame(['50', ''], $ids);
-    }
 }

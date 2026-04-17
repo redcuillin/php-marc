@@ -3,6 +3,7 @@
 namespace Tests;
 
 use File_MARC;
+use File_MARC_Control_Field;
 use File_MARC_Record;
 use Scriptotek\Marc\AuthorityRecord;
 use Scriptotek\Marc\BibliographicRecord;
@@ -158,5 +159,92 @@ class RecordTest extends TestCase
         $record = Record::fromSimpleXMLElement($source);
         $this->assertInstanceOf(Record::class, $record);
         $this->assertInstanceOf(BibliographicRecord::class, $record);
+    }
+
+    public function testSortFieldsByTagOrdersDataFieldsNumericallyByTag()
+    {
+        $source = '<?xml version="1.0" encoding="UTF-8" ?>
+          <record>
+            <leader>00000nam a2200277 a 4500</leader>
+            <controlfield tag="001">trs_sho_id_308</controlfield>
+            <controlfield tag="008">260417s2026    can     ob    001 0 eng d</controlfield>
+            <datafield tag="264" ind1="1" ind2=" ">
+              <subfield code="a">Edinburgh :</subfield>
+            </datafield>
+            <datafield tag="020" ind1=" " ind2=" ">
+              <subfield code="a">9780748616275</subfield>
+            </datafield>
+          </record>';
+
+        $record = Record::fromString($source);
+        $record->sortFieldsByTag();
+
+        $tags = [];
+        foreach ($record->getRecord()->getFields() as $field) {
+            $tags[] = $field->getTag();
+        }
+
+        $this->assertSame(['001', '008', '020', '264'], $tags);
+    }
+
+    public function testSortFieldsByTagPreservesOrderAmongDuplicateTags()
+    {
+        $source = '<?xml version="1.0" encoding="UTF-8" ?>
+          <record>
+            <leader>00000nam a2200277 a 4500</leader>
+            <controlfield tag="001">id1</controlfield>
+            <datafield tag="650" ind1=" " ind2="0">
+              <subfield code="a">Topic A</subfield>
+            </datafield>
+            <datafield tag="650" ind1=" " ind2="0">
+              <subfield code="a">Topic B</subfield>
+            </datafield>
+          </record>';
+
+        $record = Record::fromString($source);
+        $record->sortFieldsByTag();
+
+        $sixFifties = $record->getFields('650');
+        $this->assertCount(2, $sixFifties);
+        $this->assertStringContainsString('Topic A', (string) $sixFifties[0]);
+        $this->assertStringContainsString('Topic B', (string) $sixFifties[1]);
+    }
+
+    public function testSortFieldsByTagPutsLdrFieldBeforeNumericTags()
+    {
+        $source = '<?xml version="1.0" encoding="UTF-8" ?>
+          <record>
+            <leader>00000nam a2200277 a 4500</leader>
+            <controlfield tag="020">9780123456789</controlfield>
+            <controlfield tag="LDR">00000nam a2200277 a 4500</controlfield>
+          </record>';
+
+        $record = Record::fromString($source);
+        $record->sortFieldsByTag();
+
+        $tags = [];
+        foreach ($record->getRecord()->getFields() as $field) {
+            $tags[] = $field->getTag();
+        }
+
+        $this->assertSame(['LDR', '020'], $tags);
+    }
+
+    public function testSortFieldsByTagRecognizesLdrTagCaseInsensitively()
+    {
+        $record = Record::fromString('<?xml version="1.0" encoding="UTF-8" ?>
+          <record>
+            <leader>00000nam a2200277 a 4500</leader>
+            <controlfield tag="001">id</controlfield>
+          </record>');
+        $record->getRecord()->appendField(new File_MARC_Control_Field('ldr', '00000nam a2200277 a 4500'));
+        $record->sortFieldsByTag();
+
+        $tags = [];
+        foreach ($record->getRecord()->getFields() as $field) {
+            $tags[] = $field->getTag();
+        }
+
+        $this->assertSame(['ldr', '001'], $tags);
     }
 }

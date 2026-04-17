@@ -3,7 +3,6 @@
 namespace Scriptotek\Marc;
 
 use File_MARC;
-use File_MARC_Control_Field;
 use File_MARC_Record;
 use File_MARCXML;
 use Scriptotek\Marc\Exceptions\RecordNotFound;
@@ -111,67 +110,11 @@ class Collection implements \Iterator
     /**
      * Returns an array representation of the collection.
      *
-     * @return Record[]
+     * @return Collection[]
      */
     public function toArray(): array
     {
         return iterator_to_array($this);
-    }
-
-    /**
-     * Sort records by the numeric value of a control field (MARC tag), default 001.
-     *
-     * Loads the entire collection into memory if it is not already cached, then
-     * reorders records by comparing integer keys parsed from the control field
-     * value (leading digits when the value is not purely numeric). Records with
-     * no such field, or no parseable digits, sort after those with a key.
-     *
-     * @param string $controlFieldTag Three-digit control field tag, e.g. "001".
-     * @return $this
-     */
-    public function sorter(string $controlFieldTag = '001'): self
-    {
-        $records = iterator_to_array($this, false);
-        usort(
-            $records,
-            function (Record $a, Record $b) use ($controlFieldTag): int {
-                return self::numericKeyFromControlField($a, $controlFieldTag)
-                    <=> self::numericKeyFromControlField($b, $controlFieldTag);
-            }
-        );
-        $this->_records = $records;
-        $this->useCache = true;
-        $this->parser = null;
-        $this->rewind();
-
-        return $this;
-    }
-
-    /**
-     * Integer sort key from a control field for use with {@see self::sorter()}.
-     */
-    private static function numericKeyFromControlField(Record $record, string $tag): int
-    {
-        $wrapper = $record->getField($tag);
-        if ($wrapper === null) {
-            return PHP_INT_MAX;
-        }
-        $marc = $wrapper->getField();
-        if (!$marc instanceof File_MARC_Control_Field) {
-            return PHP_INT_MAX;
-        }
-        $raw = trim($marc->getData());
-        if ($raw === '') {
-            return PHP_INT_MAX;
-        }
-        if (ctype_digit($raw)) {
-            return (int) $raw;
-        }
-        if (preg_match('/-?\d+/', $raw, $m)) {
-            return (int) $m[0];
-        }
-
-        return PHP_INT_MAX;
     }
 
     /**

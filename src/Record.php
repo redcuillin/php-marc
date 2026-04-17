@@ -115,6 +115,54 @@ class Record implements JsonSerializable
         }, $this->record->getFields($spec, $pcre)));
     }
 
+    /**
+     * Reorder all fields in this record by tag ascending.
+     *
+     * Field tags are either `LDR` (leader, when stored as a field) or three-digit
+     * strings `001` through `999`. Any `LDR` fields are
+     * moved to the front; remaining fields are sorted by tag string (numeric order
+     * for standard digit tags). Duplicate tags keep their relative order. The
+     * record leader from {@see getLeader()} is separate from the field list and is
+     * not modified.
+     *
+     * @return $this
+     */
+    public function sortFieldsByTag(): self
+    {
+        $list = $this->record->getFields();
+        $ldr = [];
+        $rest = [];
+        $i = 0;
+        foreach ($list as $field) {
+            $item = [$i++, $field];
+            if (strtoupper($field->getTag()) === 'LDR') {
+                $ldr[] = $item;
+            } else {
+                $rest[] = $item;
+            }
+        }
+        usort(
+            $rest,
+            static function (array $a, array $b): int {
+                $cmp = strcmp($a[1]->getTag(), $b[1]->getTag());
+                if ($cmp !== 0) {
+                    return $cmp;
+                }
+
+                return $a[0] <=> $b[0];
+            }
+        );
+        $ordered = array_merge($ldr, $rest);
+        while ($list->count() > 0) {
+            $list->shift();
+        }
+        foreach ($ordered as [, $field]) {
+            $this->record->appendField($field);
+        }
+
+        return $this;
+    }
+
     /*************************************************************************
      * Data loading
      *************************************************************************/
