@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+  <record>
+    <leader>00778cam a22002531u 4500</leader>
+    <controlfield tag="001">300</controlfield>
+    <controlfield tag="008">110607s1964    xx#||||||    |000|u|eng|d</controlfield>
+  </record>
+  <record>
+    <leader>00778cam a22002531u 4500</leader>
+    <controlfield tag="001">100</controlfield>
+    <controlfield tag="008">110607s1964    xx#||||||    |000|u|eng|d</controlfield>
+  </record>
+  <record>
+    <leader>00778cam a22002531u 4500</leader>
+    <controlfield tag="001">200</controlfield>
+    <controlfield tag="008">110607s1964    xx#||||||    |000|u|eng|d</controlfield>
+  </record>
+</collection>
