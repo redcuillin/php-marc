@@ -86,6 +86,19 @@ Records can be edited using the editing capabilities of File_MARC
 See [an example](https://github.com/scriptotek/php-marc/issues/13#issuecomment-522036879)
 to get started.
 
+### Sorting field order (`Record::sortFieldsByTag`)
+
+To reorder the fields inside a single record by MARC tag (so `020` comes before `264`,
+for example), call `sortFieldsByTag()` on the record. Any field whose tag is `LDR`
+(case-insensitive) is moved to the front; all other fields are sorted by their
+three-digit tag (`001`–`999`). When several fields share the same tag, their
+relative order is preserved. The leader string from `getLeader()` is not part of
+the field list and is left unchanged.
+
+```php
+$record->sortFieldsByTag(); // returns $record for chaining
+```
+
 ## Querying with MARCspec
 
 Use the `Record::query()` method to query a record using the
