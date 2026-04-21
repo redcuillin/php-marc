@@ -1,10 +1,32 @@
+## Fork (redcuillin)
+
+Maintained for PHP 8.4 support. Upstream: [scriptotek/php-marc](https://github.com/scriptotek/php-marc).
+
+### Using this fork with Composer
+
+Add the following to your `composer.json` `repositories` and `require` sections (merge with existing entries as needed):
+
+```json
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/redcuillin/php-marc"
+    }
+],
+"require": {
+    "scriptotek/marc": "dev-main as 4.999.0"
+}
+```
+
+-----
+
+## Upstream readme:
+
 [![Coverage](https://img.shields.io/codecov/c/github/scriptotek/php-marc)](https://codecov.io/gh/scriptotek/php-marc)
 [![StyleCI](https://github.styleci.io/repos/41363199/shield?branch=main)](https://styleci.io/repos/41363199)
 [![Code Climate](https://img.shields.io/codeclimate/maintainability/scriptotek/php-marc)](https://codeclimate.com/github/scriptotek/php-marc)
 [![Latest Stable Version](https://img.shields.io/packagist/v/scriptotek/marc)](https://packagist.org/packages/scriptotek/marc)
 [![Total Downloads](https://img.shields.io/packagist/dt/scriptotek/marc)](https://packagist.org/packages/scriptotek/marc)
-
-# Fork by redcuillin for php8.4 support
 
 # scriptotek/marc
 
